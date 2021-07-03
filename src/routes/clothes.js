@@ -1,40 +1,62 @@
 'use strict';
 
 const express = require('express');
-const Clothes = require('../models/clothes');
 const router = express.Router();
-const Item = new Clothes();
-
+const clothesModel = require('../models/clothes');
+const Interface = require('../models/data-collection-class');
+const Item = new Interface(clothesModel);
+const validator = require('../middlewares/validator');
 
 router.get('/', getItem);
 router.get('/:id', getItem);
-router.post('/', createItem);
-router.put('/:id', updateItem);
+router.post('/', validator, createItem);
+router.put('/:id', validator, updateItem);
 router.delete('/:id', deleteItem);
 
 
-
-
-
-function getItem(req, res) {
-  const Obj = Item.read(req.params.id);
-  res.json(Obj);
+async function getItem(req, res, next) {
+  try {
+    const id = req.params.id;
+    const storedData = await Item.read(id);
+    res.json({ storedData });
+  }
+  catch (e) {
+    next(e);
+  }
 }
 
-function createItem(req, res) {
-  const Obj = Item.create(req.body);
-  res.json(Obj);
+async function createItem(req, res, next) {
+  try {
+    const data = req.body;
+    const newItem = await Item.create(data);
+    res.json(newItem);
+  }
+  catch (e) {
+    next(e);
+  }
 }
 
-function updateItem(req, res) {
-  const Obj = Item.update(req.params.id, req.body);
-  res.json(Obj);
+async function updateItem(req, res, next) {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const updatedItem = await Item.update(id, data);
+    res.json(updatedItem);
+  }
+  catch (e) {
+    next(e);
+  }
 }
 
-function deleteItem(req, res) {
-  const Obj = Item.delete(req.params.id);
-  res.json(Obj);
+async function deleteItem(req, res, next) {
+  try {
+    const id = req.params.id;
+    const deletedItem = await Item.delete(id);
+    res.json(deletedItem);
+  }
+  catch (e) {
+    next(e);
+  }
 }
-
 
 module.exports = router;
