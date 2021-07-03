@@ -1,31 +1,52 @@
+
 'use strict';
 
 const express = require('express');
 const app = express();
-const cors = require('cors');
-const morgan = require('morgan');
 const notFoundHandler = require('./error-handlers/404');
 const errorHandler = require('./error-handlers/500');
-const clothesRouter = require('./routes/clothes');
+const logger = require('./middleware/logger');
+const validator = require('./middleware/validator');
 const foodRouter = require('./routes/food');
+const clothesRouter = require('./routes/clothes');
 
 app.use(express.json());
-app.use(morgan('dev'));
-app.use(cors());
-app.use('/api/v1/clothes', clothesRouter);
-app.use('/api/v1/food', foodRouter);
+app.use(express.urlencoded({ extended: true }));
+app.use(logger);
 
-app.get('/', (req, res) => {
-  res.send('Home Route');
-});
+function start(port) {
+  app.listen(port, () => console.log(`Listening on ${port}`));
+}
+
+app.get('/', homeHandler);
+app.get('/bad', badHandler);
+app.get('/person', validator, personHandler);
+app.use('/api/v1/food', foodRouter);
+app.use('/api/v1/clothes', clothesRouter);
+
+
+
+
+// GET http://localhost:3000/person?name=haneen
+function personHandler(req, res) {
+  const output = {
+    name: req.query.name,
+  };
+  res.json(output);
+}
+
+function homeHandler(req, res) {
+  res.status(200).send('Hello from Backend');
+}
+
+function badHandler(req, res) {
+  throw new Error('Something went wrong');
+}
 
 app.use('*', notFoundHandler);
 app.use(errorHandler);
 
 module.exports = {
-  server: app,
-  start: (port) => {
-    app.listen(port, () => console.log(`Listening on ${port}`));
-  },
+  app: app,
+  start: start,
 };
-

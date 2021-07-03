@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "jest --coverage --verbose"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@code-fellows/supergoose": "^1.1.0",
     "jest": "^27.0.6",
     "supertest": "^6.1.3"
   }
