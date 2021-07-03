@@ -1,12 +1,44 @@
+
 'use strict';
 
-const mongoose = require('mongoose');
+const uuid = require('uuid').v4;
 
-const foodSchema = mongoose.Schema({
-  name: { type: String },
-  description: { type: String },
-});
+class Food {
+  constructor() {
+    this.db = [];
+  }
 
-const foodModel = mongoose.model('food', foodSchema);
+  create(obj) {
+    const recipe = {
+      id: uuid(),
+      data: obj,
+    };
+    this.db.push(recipe);
+    return recipe;
+  }
 
-module.exports = foodModel;
+
+  read(id) {
+    if (id) {
+      return this.db.find((recipe) => recipe.id === id);
+    } else {
+      return this.db;
+    }
+  }
+
+  update(id, obj) {
+    for (let i = 0; i < this.db.length; i++) {
+      if (this.db[i].id === id) {
+        this.db[i].data = obj;
+        return this.db[i];
+      }
+    }
+  }
+
+  delete(id) {
+    this.db = this.db.filter((record) => record.id !== id);
+
+  }
+}
+
+module.exports = Food;
