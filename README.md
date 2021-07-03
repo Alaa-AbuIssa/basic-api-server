@@ -2,7 +2,7 @@
 
 
 ## UML
-<img src="./UML.jpg" />
+<img src="./src/UML.png" />
 
 
 Heroku Link: https://alaa-basic-api-server.herokuapp.com/
